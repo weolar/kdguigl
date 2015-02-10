@@ -25,6 +25,9 @@ APP_CPPFLAGS += -fpermissive
 
 LOCAL_LDLIBS    := -llog -lGLESv2
 
+#C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/sources/cxx-stl/stlport/stlport
+#F:/Gui2/eclipse/android-ndk-r8d/sources/cxx-stl/stlport/stlport
+
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../kdgui\
  $(LOCAL_PATH)/../../../\
 $(LOCAL_PATH)/../../../skia/include\
@@ -32,7 +35,7 @@ $(LOCAL_PATH)/../../../skia/include/config\
 $(LOCAL_PATH)/../../../skia/include/core\
 $(LOCAL_PATH)/../../../skia/include/lazy\
 $(LOCAL_PATH)/../../../kdgui/script/include\
-F:/Gui2/eclipse/android-ndk-r8d/sources/cxx-stl/stlport/stlport
+C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/sources/cxx-stl/stlport/stlport
 
 LOCAL_SRC_FILES := gl_code.cpp \
 ../../../kdgui/UILib.cpp \

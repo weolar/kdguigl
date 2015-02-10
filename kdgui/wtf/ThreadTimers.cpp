@@ -107,7 +107,6 @@ void ThreadTimers::sharedTimerFiredInternal() {
 double ThreadTimers::minNextFireTime() {
 	if (m_timerHeap.isEmpty())
 		return -1;
-	LOGI("minNextFireTime~:%d %d", (DWORD)(m_timerHeap.front()->m_nextFireTime), currentTime());
 	return m_timerHeap.front()->m_nextFireTime - currentTime();
 }
 

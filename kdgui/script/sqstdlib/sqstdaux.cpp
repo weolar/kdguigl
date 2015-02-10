@@ -251,6 +251,7 @@ void _sqstd_compiler_error(HSQUIRRELVM v,const SQChar *sErr,const SQChar *sSourc
 			DebugBreak();
 	}
 #endif
+	LOGI("_sqstd_compiler_error:%s %s %d", sErr, sSource, line);
 	DebugBreak();
 }
 

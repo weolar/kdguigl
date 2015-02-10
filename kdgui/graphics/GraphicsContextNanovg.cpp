@@ -336,28 +336,28 @@ static void drawPathHelp(NVGcontext* canvas, SkPath& path, bool bStroke)
 	for (;;) {
 		switch (iter.next(pts)) {
 		case SkPath::kMove_Verb:
-			LOGI("nvgMoveTo:%f, %f", pts[0].x(), pts[0].y());
+			//LOGI("nvgMoveTo:%f, %f", pts[0].x(), pts[0].y());
 			nvgMoveTo(canvas, pts[0].x(), pts[0].y());
 			break;
 		case SkPath::kLine_Verb:
-			LOGI("nvgLineTo:%f, %f", pts[1].x(), pts[1].y());
+			//LOGI("nvgLineTo:%f, %f", pts[1].x(), pts[1].y());
 			nvgLineTo(canvas, pts[1].x(), pts[1].y());
 			//nvgLineTo(canvas, 120, 120);
 			break;
 		case SkPath::kQuad_Verb:
-			LOGI("nvgQuadTo:%f %f, %f %f", pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y());
+			//LOGI("nvgQuadTo:%f %f, %f %f", pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y());
 			nvgQuadTo(canvas, pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y());
 			break;
 		case SkPath::kCubic_Verb:
-LOGI("nvgBezierTo:%f %f, %f %f, %f %f", pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
-			        nvgBezierTo(canvas, pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
+			//LOGI("nvgBezierTo:%f %f, %f %f, %f %f", pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
+			nvgBezierTo(canvas, pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
 			break;
 		case SkPath::kClose_Verb:
-			LOGI("nvgClosePath");
+			//LOGI("nvgClosePath");
 			nvgClosePath(canvas);
 			break;
 		case SkPath::kDone_Verb:
-			LOGI("nvgStroke");
+			//LOGI("nvgStroke");
 			bStroke ? nvgStroke(canvas) : nvgFill(canvas);
 			return;
 		}
