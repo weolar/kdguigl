@@ -1,0 +1,192 @@
+LIBRARY	KdGui_d
+EXPORTS
+
+	KdCreateGuiObj
+
+	KdCreateRealWndAttachedWebPage
+
+	KdGetHWNDFromPagePtr
+
+	KdCloseRealWndAttachedWebPage
+	KdDeletePageNotCloseWindow
+
+	KdLoadPageFormUrl
+	KdLoadPageFormData
+
+	KdPostResToAsynchronousLoad
+
+	KdRegisterXMLOnRealy
+	KdRegisterUninit
+	KdRegisterScriptInit
+	KdRegisterResHandle
+	KdRegisterResOtherNameQuery
+	KdRegisterPaintCallback
+
+	KdRepaintRequested
+	KdCopyMemoryDC
+
+	KdRegisterMsgHandle
+	KdRegisterError2
+	KdSettingChange
+
+	KdInitThread
+	KdUninitThread
+
+	KdSetBackgroundColor
+
+	KdShowDebugNodeData
+
+	KdHasJsonReady
+
+	KdFireSharedTimer
+
+	KVACreate
+	KVADelete
+	KVAEmpty
+	KVAIsEmpty
+	KVAAdd
+	KVARemove
+	KVAResize
+	KVAGetSize
+	KVASetSize
+	KVAGetData
+	KVAGetAt
+	
+	SbuGetPagePtr
+	SbuGetKdPageHandle
+	SbuGetHWND
+	SbuRegisterGlobalFunc
+	SbuCreateStaticNamespace
+	SbuCreateClass
+	SbuCreateNativeClassInstance
+
+	sq_open
+	sq_newthread
+	sq_seterrorhandler
+	sq_close
+	sq_setforeignptr
+	sq_getforeignptr
+	sq_setprintfunc
+	sq_getprintfunc
+	sq_geterrorfunc
+	sq_suspendvm
+	sq_wakeupvm
+	sq_getvmstate
+	sq_compile
+	sq_compilebuffer
+	sq_enabledebuginfo
+	sq_notifyallexceptions
+	sq_setcompilererrorhandler
+	sq_push
+	sq_pop
+	sq_poptop
+	sq_remove
+	sq_gettop
+	sq_settop
+	sq_reservestack
+	sq_cmp
+	sq_move
+	sq_newuserdata
+	sq_newtable
+	sq_newtableex
+	sq_newarray
+	sq_newclosure
+	sq_setparamscheck
+	sq_bindenv
+	sq_pushstring
+	sq_pushfloat
+	sq_pushinteger
+	sq_pushbool
+	sq_pushuserpointer
+	sq_pushnull
+	sq_gettype
+	sq_getsize
+	sq_gethash
+	sq_getbase
+	sq_instanceof
+	sq_tostring
+	sq_tobool
+	sq_getstring
+	sq_getinteger
+	sq_getfloat
+	sq_getbool
+	sq_getthread
+	sq_getuserpointer
+	sq_getuserdata
+	sq_settypetag
+	sq_gettypetag
+	sq_setreleasehook
+	sq_getscratchpad
+	sq_getfunctioninfo
+	sq_getclosureinfo
+	sq_setnativeclosurename
+	sq_setinstanceup
+	sq_getinstanceup
+	sq_setclassudsize
+	sq_newclass
+	sq_createinstance
+	sq_setattributes
+	sq_getattributes
+	sq_getclass
+	sq_weakref
+	sq_getdefaultdelegate
+	sq_getmemberhandle
+	sq_getbyhandle
+	sq_setbyhandle
+	sq_pushroottable
+	sq_pushregistrytable
+	sq_pushconsttable
+	sq_setroottable
+	sq_setconsttable
+	sq_newslot
+	sq_deleteslot
+	sq_set
+	sq_get
+	sq_rawget
+	sq_rawset
+	sq_rawdeleteslot
+	sq_arrayappend
+	sq_arraypop
+	sq_arrayresize
+	sq_arrayreverse
+	sq_arrayremove
+	sq_arrayinsert
+	sq_setdelegate
+	sq_getdelegate
+	sq_clone
+	sq_setfreevariable
+	sq_next
+	sq_getweakrefval
+	sq_clear
+	sq_call
+	sq_resume
+	sq_getlocal
+	sq_getcallee
+	sq_getfreevariable
+	sq_throwerror
+	sq_throwobject
+	sq_reseterror
+	sq_getlasterror
+	sq_getstackobj
+	sq_pushobject
+	sq_addref
+	sq_release
+	sq_getrefcount
+	sq_resetobject
+	sq_objtostring
+	sq_objtobool
+	sq_objtointeger
+	sq_objtofloat
+	sq_objtouserpointer
+	sq_getobjtypetag
+	sq_collectgarbage
+	sq_resurrectunreachable
+	sq_writeclosure
+	sq_readclosure
+	sq_malloc
+	sq_realloc
+	sq_free
+	sq_stackinfos
+	sq_setdebughook
+	sq_setnativedebughook
+	

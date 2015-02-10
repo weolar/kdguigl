@@ -1,0 +1,1 @@
+脚本里在初始化的时候会VmMain ( CmdLine )，然后每个控件SendNotify的时候会调用VmMsgHandle

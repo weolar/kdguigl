@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqstdlib", "sqstdlib\sqstdlib.vcproj", "{879AB6AB-C184-43DE-B13E-3FFC7F7C31A7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "squirrel", "squirrel\squirrel.vcproj", "{3517D4A0-EE3C-4C22-A369-5D50F7AF4E70}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{879AB6AB-C184-43DE-B13E-3FFC7F7C31A7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{879AB6AB-C184-43DE-B13E-3FFC7F7C31A7}.Debug|Win32.Build.0 = Debug|Win32
+		{879AB6AB-C184-43DE-B13E-3FFC7F7C31A7}.Release|Win32.ActiveCfg = Release|Win32
+		{879AB6AB-C184-43DE-B13E-3FFC7F7C31A7}.Release|Win32.Build.0 = Release|Win32
+		{3517D4A0-EE3C-4C22-A369-5D50F7AF4E70}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3517D4A0-EE3C-4C22-A369-5D50F7AF4E70}.Debug|Win32.Build.0 = Debug|Win32
+		{3517D4A0-EE3C-4C22-A369-5D50F7AF4E70}.Release|Win32.ActiveCfg = Release|Win32
+		{3517D4A0-EE3C-4C22-A369-5D50F7AF4E70}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
