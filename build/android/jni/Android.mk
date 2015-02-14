@@ -23,7 +23,7 @@ APP_CPPFLAGS += -frtti
 APP_CPPFLAGS += -fexceptions
 APP_CPPFLAGS += -fpermissive
 
-LOCAL_LDLIBS    := -llog -lGLESv2
+LOCAL_LDLIBS    := -llog -lGLESv2 -landroid
 
 #C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/sources/cxx-stl/stlport/stlport
 #F:/Gui2/eclipse/android-ndk-r8d/sources/cxx-stl/stlport/stlport
@@ -39,6 +39,7 @@ C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/s
 
 LOCAL_SRC_FILES := gl_code.cpp \
 ../../../kdgui/UILib.cpp \
+../../../kdgui/platform/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp\
 ../../../kdgui/Api/PageManagerPublicAndroid.cpp\
 ../../../kdgui/bindings/KqPropsPushHelp.cpp\
 ../../../kdgui/bindings/ScriptApi.cpp\
