@@ -12,30 +12,25 @@ CStdValArray::CStdValArray(int iElementSize, int iPreallocSize /*= 0*/) :
    m_pVoid(NULL), 
    m_nCount(0), 
    m_iElementSize(iElementSize), 
-   m_nAllocated(iPreallocSize)
-{
+   m_nAllocated(iPreallocSize) {
    ASSERT(iElementSize>0);
    ASSERT(iPreallocSize>=0);
    if( iPreallocSize > 0 ) m_pVoid = static_cast<LPBYTE>(WTF::fastMalloc(iPreallocSize * m_iElementSize));
 }
 
-CStdValArray::~CStdValArray()
-{
+CStdValArray::~CStdValArray() {
    if( m_pVoid != NULL ) WTF::fastFree(m_pVoid);
 }
 
-void CStdValArray::Empty()
-{   
+void CStdValArray::Empty() {   
    m_nCount = 0;  // NOTE: We keep the memory in place
 }
 
-bool CStdValArray::IsEmpty() const
-{
+bool CStdValArray::IsEmpty() const {
    return m_nCount == 0;
 }
 
-bool CStdValArray::Add(LPCVOID pData)
-{
+bool CStdValArray::Add(LPCVOID pData) {
    if( ++m_nCount >= m_nAllocated) {
       m_nAllocated *= 2;
       if( m_nAllocated == 0 ) m_nAllocated = 11;
@@ -51,38 +46,32 @@ bool CStdValArray::Remove(int iIndex) {
 	return false;
 }
 
-int CStdValArray::GetSize() const
-{
+int CStdValArray::GetSize() const {
    return m_nCount;
 }
 
-LPVOID CStdValArray::GetBuffer()
-{
+LPVOID CStdValArray::GetBuffer() {
    return static_cast<LPVOID>(m_pVoid);
 }
 
-LPVOID CStdValArray::GetAt(int iIndex) const
-{
+LPVOID CStdValArray::GetAt(int iIndex) const {
    if( iIndex < 0 || iIndex >= m_nCount ) return NULL;
    return m_pVoid + (iIndex * m_iElementSize);
 }
 
-LPVOID CStdValArray::operator[] (int iIndex) const
-{
+LPVOID CStdValArray::operator[] (int iIndex) const {
    ASSERT(iIndex>=0 && iIndex<m_nCount);
    return m_pVoid + (iIndex * m_iElementSize);
 }
 
-void CStdValArray::SetSize(int nSize)
-{
+void CStdValArray::SetSize(int nSize) {
 	if (m_nAllocated < nSize)
 		ResizePrealloc(nSize);
 	
 	m_nCount = nSize;
 }
 
-bool CStdValArray::ResizePrealloc(int iPreallocSize)
-{
+bool CStdValArray::ResizePrealloc(int iPreallocSize) {
 	if (iPreallocSize <= m_nAllocated)
 		return true;
 	m_nAllocated = iPreallocSize;
@@ -92,13 +81,14 @@ bool CStdValArray::ResizePrealloc(int iPreallocSize)
 		return false;
 
 	::memcpy(pVoid, m_pVoid, m_iElementSize * m_nCount);
+	if (m_pVoid)
+		WTF::fastFree(m_pVoid);
 	m_pVoid = pVoid;
 
 	return true;
 }
 
-UINT WINAPI CStdValArray::WriteData(const unsigned char* pData, UINT uSize)
-{
+UINT WINAPI CStdValArray::WriteData(const unsigned char* pData, UINT uSize) {
 	if (m_iElementSize != 1 || uSize > 0xffffff)
 		return 0;
 
@@ -109,6 +99,18 @@ UINT WINAPI CStdValArray::WriteData(const unsigned char* pData, UINT uSize)
 	m_nCount += uSize;
 
 	return uSize;
+}
+
+unsigned char* WINAPI CStdValArray::ReAlloc(UINT uSize) {
+	if (m_nAllocated < (int)uSize)
+		ResizePrealloc(uSize);
+	return m_pVoid;
+}
+
+void WINAPI CStdValArray::Free() {
+	if (m_pVoid)
+		WTF::fastFree(m_pVoid);
+	m_nCount = 0;
 }
 
 #if _MSC_VER

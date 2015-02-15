@@ -25,20 +25,12 @@ import android.view.WindowManager;
 import android.content.res.AssetManager;
 import java.io.File;
 
-public class GL2JNIActivity extends Activity {
-
-	native static void nativeSetAssetManager(AssetManager asset);
-	
-	public static void loadAsset(Context activity) {
-		AssetManager assetManager = activity.getAssets();
-		nativeSetAssetManager(assetManager);
-	}
-		
+public class GL2JNIActivity extends Activity {		
     GL2JNIView mView;
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        loadAsset(this);
+        
         
         mView = new GL2JNIView(getApplication());
         setContentView(mView);

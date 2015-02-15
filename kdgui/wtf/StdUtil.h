@@ -39,7 +39,9 @@ protected:
 
 class IKdGuiBuffer {
 public:
-	virtual UINT WINAPI WriteData(const unsigned char* pData, UINT uSize) = 0;
+	//virtual UINT WINAPI WriteData(const unsigned char* pData, UINT uSize) = 0;
+	virtual unsigned char* WINAPI ReAlloc(UINT uSize) = 0;
+	virtual void WINAPI Free() = 0;
 };
 
 class CStdValArray : public IKdGuiBuffer
@@ -60,7 +62,9 @@ public:
    LPVOID GetAt(int iIndex) const;
    LPVOID operator[] (int nIndex) const;
 
+   virtual unsigned char* WINAPI ReAlloc(UINT uSize);
    virtual UINT WINAPI WriteData(const unsigned char* pData, UINT uSize);
+   virtual void WINAPI Free();
 
 protected:
    LPBYTE m_pVoid;

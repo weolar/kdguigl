@@ -16,6 +16,8 @@
 
 package com.android.gl2jni;
 
+import android.content.res.AssetManager;
+
 // Wrapper for native library
 
 public class GL2JNILib {
@@ -30,4 +32,6 @@ public class GL2JNILib {
      */
      public static native void init(int width, int height);
      public static native boolean step();
+     
+     native static void setAssetManager(AssetManager asset);
 }

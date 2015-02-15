@@ -33,6 +33,7 @@ package com.android.gl2jni;
 
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
@@ -67,19 +68,26 @@ import javax.microedition.khronos.opengles.GL10;
 class GL2JNIView extends GLSurfaceView {
     private static String TAG = "GL2JNIView";
     private static final boolean DEBUG = false;
+    
+    public static void loadAsset(Context activity) {
+		AssetManager assetManager = activity.getAssets();
+		GL2JNILib.setAssetManager(assetManager);
+	}
 
     public GL2JNIView(Context context) {
         super(context);
-        init(false, 0, 0);
+        loadAsset(context);
+        init(context, false, 0, 0);
     }
 
     public GL2JNIView(Context context, boolean translucent, int depth, int stencil) {
         super(context);
-        init(translucent, depth, stencil);
+        init(context, translucent, depth, stencil);
     }
 
-    private void init(boolean translucent, int depth, int stencil) {
-
+    private void init(Context context, boolean translucent, int depth, int stencil) {
+    	loadAsset(context);
+    	
         /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
          * If we want a translucent one, we should change the surface's
          * format here, using PixelFormat.TRANSLUCENT for GL Surfaces

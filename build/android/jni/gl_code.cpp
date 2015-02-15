@@ -175,67 +175,21 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <UIlib.h>
-#include "wtf/MainThread.h"
-#include "Core/UIManager.h"
-#include "graphics/IntRect.h"
+#include "Application.h"
 
 CPageManager* g_pageMgr = 0;
-
-static const char g_script[] =
-"var json = ["
-"	[\"rect\", {\"x\":1, \"y\":20, \"width\":100, \"height\":\"127\", \"fill\":0xff1100, \"opacity\":1, \"id\":\"test1\"},],"
-"	[\"path\", {\"d\":\"M20 20 C90 40 130 40 180 20 S250 60 280 20\", \"fill\":\"none\", \"stroke\":\"#0000ff\"}],"
-"];\n"
-""
-"function SvgInit() {"
-"	var alpha = 0.01;"
-"	setInterval(function () {"
-"		alpha += 0.01;"
-"		if (alpha >= 1)"
-"			alpha = 0.01;"
-"		$(\"test1\").attr({\"opacity\":alpha});"
-"	}, 100);"
-"}\n"
-"loadScriptResourceAndParseJson([], json, svgRoot());";
-
-//////////////////////////////////////////////////////////////////////////
-
-LRESULT KdResCallback (
-	KdPagePtr pKdPagePtr,
-	void* pMainContext,
-	void* pPageContext,
-	HWND hWnd,
-	const SQChar* pURL,
-	IKdGuiBuffer* pAllocate
-	) {
-	;
-}
 
 JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj, jint width, jint height)
 {
     //setupGraphics(width, height);
-
-	MTInit();
-
-	if (g_pageMgr)
-		return;
-
-	LOGI("Java_com_android_gl2jni_GL2JNILib_init");
-
-	IntRect rc(0, 0, width, height);
-
-	g_pageMgr = new CPageManager();
-	g_pageMgr->Init(0);
-	g_pageMgr->SetClientRectAndInvalideta(rc);
-	g_pageMgr->LoadScriptFromBuf("test.js", g_script, sizeof(g_script));
-	g_pageMgr->m_callbacks.m_resHandle = pCallBack;
+	Application::GetInst()->Init(width, height);
+	
 }
 
 JNIEXPORT jboolean JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj)
 {
     //renderFrame();
-	g_pageMgr->MainLoop();
+	Application::GetInst()->MainLoop();
 
 	return true;
 }

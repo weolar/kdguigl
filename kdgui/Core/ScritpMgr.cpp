@@ -28,6 +28,8 @@ void ScritpMgr::PrintFunc(HSQUIRRELVM v,const SQChar* s,...) {
 	scvsprintf(temp.GetBuffer(2048),s, vl);
 	temp.ReleaseBuffer();
 
+	LOGI("ScritpMgr::PrintFunc");
+
 	if (temp.IsEmpty() || L'\n' != temp.GetAt(temp.GetLength() - 1))
 		temp += _SC(" -- print\n");
 	OutputDebugString(temp);

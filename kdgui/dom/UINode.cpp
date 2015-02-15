@@ -449,8 +449,9 @@ void UINode::SetNeedLayout() {
 }
 
 void UINode::Paint(GraphicsContext* g, const IntRect &rcInvalid) {
+LOGI("UINode::Paint 2");
 	RenderCommBegin();
-
+LOGI("UINode::Paint");
 	for(size_t it = 0; it < m_children.size(); ++it)		
 		m_children[it]->Paint(g, repaintRc);
 

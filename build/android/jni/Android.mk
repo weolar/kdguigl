@@ -39,6 +39,7 @@ C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/s
 
 LOCAL_SRC_FILES := gl_code.cpp \
 ../../../kdgui/UILib.cpp \
+Application.cpp\
 ../../../kdgui/platform/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp\
 ../../../kdgui/Api/PageManagerPublicAndroid.cpp\
 ../../../kdgui/bindings/KqPropsPushHelp.cpp\

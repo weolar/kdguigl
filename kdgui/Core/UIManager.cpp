@@ -193,6 +193,8 @@ bool CPageManager::LoadScriptFromBuf(LPCTSTR src, LPCTSTR scriptBuf, int size) {
 
 	m_docURI = src;
 
+	LOGI("CPageManager: LoadScriptFromBuf");
+
 	NotifScriptInit();
 	// ±àÒë²¢Ö´ÐÐ
 	m_scriptMgr->CompileAndCall(scriptBuf, size, src);

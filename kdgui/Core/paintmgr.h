@@ -243,7 +243,7 @@ public:
 	}
 
 	void DoPaintContents(const IntRect& dirtyRect, NVGcontext* pCanvas) {
-		LOGI("DoPaintContents 1");
+		LOGI("DoPaintContents 1:%d %d", dirtyRect.width(), dirtyRect.height());
 
 		m_bRequestRender = true;
 		PlatformContextNanovg context(pCanvas);
