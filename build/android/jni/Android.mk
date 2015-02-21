@@ -35,12 +35,13 @@ $(LOCAL_PATH)/../../../skia/include/config\
 $(LOCAL_PATH)/../../../skia/include/core\
 $(LOCAL_PATH)/../../../skia/include/lazy\
 $(LOCAL_PATH)/../../../kdgui/script/include\
-C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/sources/cxx-stl/stlport/stlport
+F:/Gui2/eclipse/android-ndk-r8d/sources/cxx-stl/stlport/stlport
 
-LOCAL_SRC_FILES := gl_code.cpp \
-../../../kdgui/UILib.cpp \
-Application.cpp\
-../../../kdgui/platform/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp\
+#C:/Users/Administrator/Desktop/adt-bundle-windows-x86-20140321/android-ndk-r8d/sources/cxx-stl/stlport/stlport
+
+LOCAL_SRC_FILES := ../../../kdgui/UILib.cpp \
+../../../kdgui/platform/android/Application.cpp\
+../../../kdgui/platform/android/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp\
 ../../../kdgui/Api/PageManagerPublicAndroid.cpp\
 ../../../kdgui/bindings/KqPropsPushHelp.cpp\
 ../../../kdgui/bindings/ScriptApi.cpp\
@@ -72,6 +73,7 @@ Application.cpp\
 ../../../kdgui/graphics/FloatQuad.cpp\
 ../../../kdgui/graphics/FloatRectSkia.cpp\
 ../../../kdgui/graphics/FloatSize.cpp\
+../../../kdgui/graphics/FontUtil.cpp\
 ../../../kdgui/graphics/Gradient.cpp\
 ../../../kdgui/graphics/GradientSkia.cpp\
 ../../../kdgui/graphics/GraphicsContext.cpp\
