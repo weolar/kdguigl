@@ -4,6 +4,11 @@
 #include "GraphicsContextPlatformPrivate.h"
 #include "PlatformContextNanovg.h"
 #include "SkiaUtils.h"
+
+#ifndef _MSC_VER
+#include "dom/style/NodeStyle.h"
+#include "Graphics/FontUtil.h"
+#endif
 #include "TextRun.h"
 
 #include "skia/include/effects/SkBlurMaskFilter.h"
@@ -584,6 +589,9 @@ void GraphicsContext::drawText(int x, int y, const TextRun& textRun)
 // 	CStringA strUtf8 = CW2A(textRun.characters.GetString(), CP_UTF8);
 // 	platformContext()->canvas()->drawText((LPCSTR)strUtf8, strUtf8.GetLength(), 
 // 		SkIntToScalar(x), SkIntToScalar(y), skPaint);
+
+	FUSetNanoVGByTextRun(platformContext()->canvas(), textRun);
+	nvgText(platformContext()->canvas(), x, y, textRun.characters.GetString(), NULL);
 }
 
 void GraphicsContext::clipPath(const KdPath& pathToClip, WindRule clipRule)

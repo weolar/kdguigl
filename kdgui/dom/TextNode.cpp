@@ -1,8 +1,12 @@
 #include <UIlib.h>
 #include <wtf/UtilHelp.h>
-
+#ifndef _MSC_VER
+#include "Core/UIManager.h"
+#endif
 #include "Style/NodeStyle.h"
 #include "Graphics/GraphicsContext.h"
+#include "Graphics/FontUtil.h"
+//#include "Graphics/PlatformContextNanovg.h"
 #include "Graphics/TextRun.h"
 #include "Rendering/RenderSupport.h"
 #include "TextNode.h"
@@ -12,6 +16,7 @@ const int s_nAdjustY = 0; // 为了兼容老悬浮窗的位置
 TextNode::TextNode() {
 	m_bHadSettedTextStyle = false;
 	m_bNeedEllipsis = false;
+	m_descender = 0;
 }
 
 TextNode::~TextNode() {
@@ -52,21 +57,19 @@ bool TextNode::SetAttr(LPCTSTR pstrName, LPCTSTR pstrValue) {
 }
 
 IntRect TextNode::GetBoundingByStyle() {
-	return IntRect();
+	int x = m_nodeStyle->X(), y = m_nodeStyle->Y(), width = m_nodeStyle->Width();
+	TextRun textRun(m_text);
+	if (textRun.characters.IsEmpty()) // 如果是空的，则至少放入一个字符，防止获取到的高度为零
+		textRun.characters = _SC("U");
 
-// 	int x = m_nodeStyle->X(), y = m_nodeStyle->Y(), width = m_nodeStyle->Width();
-// 	TextRun textRun(m_text);
-// 	if (textRun.characters.IsEmpty()) // 如果是空的，则至少放入一个字符，防止获取到的高度为零
-// 		textRun.characters = _SC("U");
-// 
-// 	textRun.characters.Replace(_SC(' '), _SC('_')); // 修复skia忽略空格的特性
-// 
-// 	if (!CreateTextRunByStyle(m_nodeStyle, textRun))
-// 		return IntRect();
-// 
-// 	SkPaint skPaint;
-// 	UHSetSkPaintByTextRun(skPaint, textRun);
-// 	return UHMeasureTextByTextRun(x, y, width, textRun, &m_descender, &m_bNeedEllipsis);
+	textRun.characters.Replace(_SC(' '), _SC('_')); // 修复skia忽略空格的特性
+
+	if (!CreateTextRunByStyle(m_nodeStyle, textRun))
+		return IntRect();
+
+	if (!m_pManager->GetCanvas())
+		DebugBreak();
+	return FUMeasureTextByTextRun(m_pManager->GetCanvas(), x, y, width, textRun, &m_descender, &m_bNeedEllipsis);
 }
 
 IntRect TextNode::BoundingRectInLocalCoordinates() {
@@ -83,95 +86,100 @@ IntRect TextNode::BoundingRectInLocalCoordinates() {
 }
 
 bool TextNode::CreateTextRunByStyle(const NodeStyle* style, TextRun& textRun) {
-// 	if (!m_bHadSettedTextStyle)
-// 		return false;
-// 	
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleTextAnchor)) {
-// 		NRSTextAnchor textAnchor = (NRSTextAnchor)m_nodeStyle->GetintAttrById(eNRStyleTextAnchor);
-// 		if (eNRSTextAnchorStart != textAnchor) {
-// 			KDASSERT(m_nodeStyle->IsStyleSetted(eNRStyleWidth));
-// 			if (!m_nodeStyle->IsStyleSetted(eNRStyleWidth))
-// 				m_nodeStyle->DumpAllAttrs();
-// 
-// 			textRun.align = (SkPaint::Align)textAnchor; // 两个枚举类型的值顺序是一样的
-// 		}
-// 	}
-// 
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleFontSize))
-// 		textRun.textSize = SkIntToScalar(m_nodeStyle->GetintAttrById(eNRStyleFontSize));
-// 
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleTextDecoration)) {
-// 		NRSTextDecoration textDecoration = m_nodeStyle->TextDecoration();
-// 		if (eNRSTextDecorationUnderline == textDecoration)
-// 			textRun.bUnderline = true;
-// 	}
-// 
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleFontWeight)) {
-// 		NRSFontWeight fontWeight = m_nodeStyle->FontWeight();
-// 		if (eNRSFontWeightBold == fontWeight)
-// 			textRun.bBold = true;
-// 	}
-// 
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleFillColor))
-// 		textRun.color = 0xff000000 | m_nodeStyle->FillColor().ToColor();
-// 
-// 	if (m_nodeStyle->IsStyleSetted(eNRStyleTextOverflow)) {
-// 		NRSTextOverflow overFlow = m_nodeStyle->TextOverflow();
-// 		if (eNRSTextOverflowEllipsis == overFlow)
-// 			textRun.bOverflowEllipsis = true;
-// 	}
-// 
-// 	CStdString fontFamily = m_nodeStyle->GetCStdStringAttrById(eNRStyleFontFamily);
-// 	if (!fontFamily.IsEmpty())
-// 		textRun.familyName = fontFamily.GetString();
+	if (!m_bHadSettedTextStyle)
+		return false;
+	
+	if (m_nodeStyle->IsStyleSetted(eNRStyleTextAnchor)) {
+		NRSTextAnchor textAnchor = (NRSTextAnchor)m_nodeStyle->GetintAttrById(eNRStyleTextAnchor);
+		if (eNRSTextAnchorStart != textAnchor) {
+			KDASSERT(m_nodeStyle->IsStyleSetted(eNRStyleWidth));
+			if (!m_nodeStyle->IsStyleSetted(eNRStyleWidth))
+				m_nodeStyle->DumpAllAttrs();
+
+			textRun.align = /*(SkPaint::Align)*/textAnchor; // 两个枚举类型的值顺序是一样的
+		}
+	}
+
+	if (m_nodeStyle->IsStyleSetted(eNRStyleFontSize))
+		textRun.textSize = SkIntToScalar(m_nodeStyle->GetintAttrById(eNRStyleFontSize));
+
+	if (m_nodeStyle->IsStyleSetted(eNRStyleTextDecoration)) {
+		NRSTextDecoration textDecoration = m_nodeStyle->TextDecoration();
+		if (eNRSTextDecorationUnderline == textDecoration)
+			textRun.bUnderline = true;
+	}
+
+	if (m_nodeStyle->IsStyleSetted(eNRStyleFontWeight)) {
+		NRSFontWeight fontWeight = m_nodeStyle->FontWeight();
+		if (eNRSFontWeightBold == fontWeight)
+			textRun.bBold = true;
+	}
+
+	if (m_nodeStyle->IsStyleSetted(eNRStyleFillColor))
+		textRun.color = 0xff000000 | m_nodeStyle->FillColor().ToColor();
+
+	if (m_nodeStyle->IsStyleSetted(eNRStyleTextOverflow)) {
+		NRSTextOverflow overFlow = m_nodeStyle->TextOverflow();
+		if (eNRSTextOverflowEllipsis == overFlow)
+			textRun.bOverflowEllipsis = true;
+	}
+
+	CStdString fontFamily = m_nodeStyle->GetCStdStringAttrById(eNRStyleFontFamily);
+	if (!fontFamily.IsEmpty())
+ 		textRun.familyName = fontFamily.GetString();
 
 	return true;
 }
 
-void TextNode::DrawWithEllipsis(GraphicsContext* g, SkPaint& skPaint, IntRect& bounding, TextRun& textRun) {
-// 	UHSetSkPaintByTextRun(skPaint, textRun);
-// 	for (int i = m_text.GetLength(); i > 0; --i) {
-// 		CStdString text = m_text.Left(i - 1);
-// 		text += _SC("...");
-// 
-// 		SkRect overflowBounding;
-// #ifdef _MSC_VER
-// 		CStringA strUtf8(CW2A(text, CP_UTF8));
-// #else
-// 		CString strUtf8(text);
-// #endif
-//		skPaint.measureText(strUtf8.GetString(), strUtf8.GetLength(), &overflowBounding);
-// 		if (overflowBounding.width() > bounding.width())
-// 			continue;
-// 
-// 		textRun.align = SkPaint::kLeft_Align; // 绘制的时候以左对齐
-// 		textRun.characters = text;
-// 		g->setFillColor(KdColor(textRun.color), ColorSpaceDeviceRGB);
-// 		g->drawText(bounding.x(), bounding.y(), textRun);
-// 		break;
-// 	}
+void TextNode::DrawWithEllipsis(GraphicsContext* g, IntRect& bounding, TextRun& textRun) {
+#ifdef _MSC_VER
+	SkPaint skPaint;
+	FUSetSkPaintByTextRun(skPaint, textRun);
+	for (int i = m_text.GetLength(); i > 0; --i) {
+		CStdString text = m_text.Left(i - 1);
+		text += _SC("...");
+
+		SkRect overflowBounding;
+#ifdef _MSC_VER
+		CStringA strUtf8(CW2A(text, CP_UTF8));
+#else
+		CString strUtf8(text);
+#endif
+		skPaint.measureText(strUtf8.GetString(), strUtf8.GetLength(), &overflowBounding);
+		if (overflowBounding.width() > bounding.width())
+			continue;
+
+		textRun.align = SkPaint::kLeft_Align; // 绘制的时候以左对齐
+		textRun.characters = text;
+		g->setFillColor(KdColor(textRun.color), ColorSpaceDeviceRGB);
+		g->drawText(bounding.x(), bounding.y(), textRun);
+		break;
+	}
+#endif
 }
 
 void TextNode::Paint(GraphicsContext* g, const IntRect &rcInvalid) {
-// 	RenderCommBegin();
-// 
-// 	BoundingRectInLocalCoordinates();
-// 	IntRect bounding = m_rcPosWithoutShadow;
-// 	bounding.move(0, bounding.height());
-// 	bounding.move(0, -(m_descender + s_nAdjustY));
-// 
-// 	SkPaint skPaint;
-// 	TextRun textRun(m_text);
-// 	if (!CreateTextRunByStyle(m_nodeStyle, textRun))
-// 		return;
-// 
-// 	if (m_bNeedEllipsis) {
-// 		DrawWithEllipsis(g, skPaint, bounding, textRun);
-// 	} else {
-// 		textRun.align = SkPaint::kLeft_Align; // 绘制的时候以左对齐
-// 		g->setFillColor(KdColor(textRun.color), ColorSpaceDeviceRGB);
-// 		g->drawText(bounding.x(), bounding.y(), textRun);
-// 	}
-// 
-// 	RenderCommEnd();
+	RenderCommBegin();
+
+	BoundingRectInLocalCoordinates();
+	IntRect bounding = m_rcPosWithoutShadow;
+	bounding.move(0, bounding.height());
+	bounding.move(0, -(m_descender + s_nAdjustY));
+
+	TextRun textRun(m_text);
+	if (!CreateTextRunByStyle(m_nodeStyle, textRun))
+		return;
+
+	if (m_bNeedEllipsis) {
+		DrawWithEllipsis(g, bounding, textRun);
+	} else {
+#ifdef _MSC_VER
+		SkPaint skPaint;
+		textRun.align = SkPaint::kLeft_Align; // 绘制的时候以左对齐
+#endif
+		g->setFillColor(KdColor(textRun.color), ColorSpaceDeviceRGB);
+		g->drawText(bounding.x(), bounding.y(), textRun);
+	}
+
+	RenderCommEnd();
 }

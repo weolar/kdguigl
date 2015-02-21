@@ -14,6 +14,97 @@
 #endif
 #include "graphics/nanovg/nanovg_gl.h"
 
+//////////////////////////////////////////////////////////////////////////
+
+void drawEyes(NVGcontext* vg, float x, float y, float w, float h, float mx, float my, float t)
+{
+	NVGpaint gloss, bg;
+	float ex = w *0.23f;
+	float ey = h * 0.5f;
+	float lx = x + ex;
+	float ly = y + ey;
+	float rx = x + w - ex;
+	float ry = y + ey;
+	float dx,dy,d;
+	float br = (ex < ey ? ex : ey) * 0.5f;
+	float blink = 1 - pow(sinf(t*0.5f),200)*0.8f;
+
+	bg = nvgLinearGradient(vg, x,y+h*0.5f,x+w*0.1f,y+h, nvgRGBA(0,0,0,32), nvgRGBA(0,0,0,16));
+	nvgBeginPath(vg);
+	nvgEllipse(vg, lx+3.0f,ly+16.0f, ex,ey);
+	nvgEllipse(vg, rx+3.0f,ry+16.0f, ex,ey);
+	nvgFillPaint(vg, bg);
+	nvgFill(vg);
+
+	bg = nvgLinearGradient(vg, x,y+h*0.25f,x+w*0.1f,y+h, nvgRGBA(220,220,220,255), nvgRGBA(128,128,128,255));
+	nvgBeginPath(vg);
+	nvgEllipse(vg, lx,ly, ex,ey);
+	nvgEllipse(vg, rx,ry, ex,ey);
+	nvgFillPaint(vg, bg);
+	nvgFill(vg);
+
+	dx = (mx - rx) / (ex * 10);
+	dy = (my - ry) / (ey * 10);
+	d = sqrtf(dx*dx+dy*dy);
+	if (d > 1.0f) {
+		dx /= d; dy /= d;
+	}
+	dx *= ex*0.4f;
+	dy *= ey*0.5f;
+	nvgBeginPath(vg);
+	nvgEllipse(vg, lx+dx,ly+dy+ey*0.25f*(1-blink), br,br*blink);
+	nvgFillColor(vg, nvgRGBA(32,32,32,255));
+	nvgFill(vg);
+
+	dx = (mx - rx) / (ex * 10);
+	dy = (my - ry) / (ey * 10);
+	d = sqrtf(dx*dx+dy*dy);
+	if (d > 1.0f) {
+		dx /= d; dy /= d;
+	}
+	dx *= ex*0.4f;
+	dy *= ey*0.5f;
+	nvgBeginPath(vg);
+	nvgEllipse(vg, rx+dx,ry+dy+ey*0.25f*(1-blink), br,br*blink);
+	nvgFillColor(vg, nvgRGBA(32,32,32,255));
+	nvgFill(vg);
+
+	gloss = nvgRadialGradient(vg, lx-ex*0.25f,ly-ey*0.5f, ex*0.1f,ex*0.75f, nvgRGBA(255,255,255,128), nvgRGBA(255,255,255,0));
+	nvgBeginPath(vg);
+	nvgEllipse(vg, lx,ly, ex,ey);
+	nvgFillPaint(vg, gloss);
+	nvgFill(vg);
+
+	gloss = nvgRadialGradient(vg, rx-ex*0.25f,ry-ey*0.5f, ex*0.1f,ex*0.75f, nvgRGBA(255,255,255,128), nvgRGBA(255,255,255,0));
+	nvgBeginPath(vg);
+	nvgEllipse(vg, rx,ry, ex,ey);
+	nvgFillPaint(vg, gloss);
+	nvgFill(vg);
+}
+
+NVGcontext* gCanvas = 0;
+
+void TestDraw() {
+	glViewport(0, 0, 720, 1280);
+	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+
+	if (!gCanvas)
+		gCanvas = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+
+	nvgBeginFrame(gCanvas, 720, 1280, 1);
+	drawEyes(gCanvas, 10, 12, 100, 100, 5, 5, 100);
+	nvgEndFrame(gCanvas);
+
+	glEnable(GL_DEPTH_TEST);
+}
+//////////////////////////////////////////////////////////////////////////
+
 class DelayCallJsonInitTask : public PageManagerDelayTask {
 	WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -59,6 +150,9 @@ public:
 	}
 
 	void Init() {
+#ifndef _MSC_VER
+		ResetMemoryCanvas(NULL);
+#endif
 	}
 
 	void ClearPaintWhenLayeredWindow(skia::PlatformCanvas* canvas, const IntRect& rect) {
@@ -111,15 +205,18 @@ public:
 
 	void SchedulePaintEvent() {
 		KDASSERT (0 == m_scheduleMessageCount);
-#ifdef _MSC_VER
-		if (!m_manager->GetHWND()) 
-			return;
-#endif
 		m_scheduleMessageCount++;
 
 		HDC hDC = NULL;
-
 		IntRect lastTimeRect;
+
+#ifndef _MSC_VER	
+		PaintBegin(NULL);
+		DoPaint(NULL, &m_clientRect);
+		PaintEnd();
+#else
+		if (!m_manager->GetHWND()) 
+			return;
 
 		bool bAgainLoop = false;
 		do {
@@ -133,7 +230,7 @@ public:
 				IntRect* paintRect = &m_paintMessageQueue[i];
 				if (lastTimeRect == *paintRect || lastTimeRect.contains(*paintRect))
 					continue;
-				
+
 				lastTimeRect = *paintRect;
 				if (lastTimeRect.isEmpty()) // 这里可能会重入PostPaintMessage，所以需要重新合并脏矩形，并且小心一些bug
 					break;
@@ -150,12 +247,11 @@ public:
 				}
 			}
 		} while (bAgainLoop);
-#ifdef _MSC_VER
+
 		if (hDC)
-			::ReleaseDC(m_manager->GetHWND(), hDC);
+			::ReleaseDC(m_manager->GetHWND(), hDC);		
 #endif
 		hDC = NULL;
-
 		m_paintMessageQueue.clear();
 		m_scheduleMessageCount--;
 	}
@@ -195,6 +291,22 @@ public:
 		return TRUE;
 	}
 
+	int LoadFonts(NVGcontext* vg) {
+		int font;
+		font = nvgCreateFont(vg, "DroidSansFallback", "/system/fonts/DroidSansFallback.ttf");
+		if (font == -1) {
+			LOGI("Could not add font regular.\n");
+			return -1;
+		}
+
+		// 	font = nvgCreateFont(vg, "sans-bold", "../example/Roboto-Bold.ttf");
+		// 	if (font == -1) {
+		// 		printf("Could not add font bold.\n");
+		// 		return -1;
+		// 	}
+		return 0;
+	}
+
 	void ResetMemoryCanvas(HDC hDC) {
 		if (m_memoryCanvas && !m_bHasResize)
 			return;
@@ -212,51 +324,65 @@ public:
 		m_memoryCanvas = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);//(NVGcontext*(m_clientRect.width(), m_clientRect.height(), !m_bUseLayeredBuffer));
 #else
 		m_memoryCanvas = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+		LoadFonts(m_memoryCanvas);
 #endif
-
 		m_bHasResize = false;
 	}
 
-	void DoPaint(HDC hDC, const IntRect* paintRect) {
-		m_invalidRect = *paintRect;
-	
+	void PaintBegin(HDC hDC) {
 		ResetMemoryCanvas(hDC);
-
-		m_invalidRect.intersect(m_clientRect);
-		if (m_invalidRect.isEmpty())
-			return;
-
-		//ClearPaintWhenLayeredWindow(m_memoryCanvas, m_invalidRect);
-
-		//HDC hMemoryDC = skia::BeginPlatformPaint(m_memoryCanvas);
 
 		glViewport(0, 0, m_clientRect.width(), m_clientRect.height());
 		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+
+		nvgBeginFrame(m_memoryCanvas, m_clientRect.width(), m_clientRect.height(), 1);
+ 	}
+
+	void PaintEnd() {
+		glEnable(GL_DEPTH_TEST);
+		nvgEndFrame(m_memoryCanvas);
+	}
+
+	void DoPaint(HDC hDC, const IntRect* paintRect) {
+		m_invalidRect = *paintRect;
+	
+		m_invalidRect.intersect(m_clientRect);
+		if (m_invalidRect.isEmpty())
+			return;
+#ifdef _MSC_VER
+		PaintBegin(hDC);
+#endif
+		//ClearPaintWhenLayeredWindow(m_memoryCanvas, m_invalidRect);
+		//HDC hMemoryDC = skia::BeginPlatformPaint(m_memoryCanvas);
+
 		DoPaintContents(m_invalidRect, m_memoryCanvas);
+
 #ifdef _MSC_VER
 		::SwapBuffers(hDC);
+		PaintEnd();
 #endif
 		if (m_manager->HasSvgInit() && !m_manager->HasJsonReady() && m_manager->m_callbacks.m_xmlHaveFinished)
 			m_manager->PostDelayTask(new DelayCallJsonInitTask());
 	}
 
 	void DoPaintContents(const IntRect& dirtyRect, NVGcontext* pCanvas) {
-		LOGI("DoPaintContents 1:%d %d", dirtyRect.width(), dirtyRect.height());
-
 		m_bRequestRender = true;
 		PlatformContextNanovg context(pCanvas);
 
 		GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
-		gc.beginFrame(m_clientRect.width(), m_clientRect.height(), 1);
-
 		gc.save();
 
+#ifdef _MSC_VER
 		//gc.clip(dirtyRect);
-// 		if (!m_bUseLayeredBuffer)
-// 			gc.fillRect(dirtyRect, KdColor(m_bdColor), ColorSpaceDeviceRGB);
-
+		if (!m_bUseLayeredBuffer)
+			gc.fillRect(dirtyRect, KdColor(m_bdColor), ColorSpaceDeviceRGB);
+#endif
 		m_manager->GetRootTemporary()->Paint(&gc, dirtyRect); // 绘制脏矩形
 
 		//gc.strokeRect(dirtyRect, 1);
@@ -266,8 +392,6 @@ public:
 			gc.fillRect(*m_rcHighLight,  KdColor(160, 297, 232, 170), ColorSpaceDeviceRGB);
 		
 		gc.restore();
-
-		gc.endFrame();
 	}
 
 	void PostClientPaintMessage() {
@@ -369,6 +493,7 @@ public:
 	bool m_bUseLayeredBuffer;
 	bool m_bRequestRender;
 	OS_EVENT_HANDLE m_hMainLoopWakeUpEvent;
+	NVGcontext* m_memoryCanvas;
 
 protected:
 	WTF::Vector<IntRect> m_paintMessageQueue;
@@ -383,7 +508,7 @@ protected:
 	CPageManager* m_manager;
 
 	IntRect m_clientRect;
-	NVGcontext* m_memoryCanvas;
+	
 #ifdef _MSC_VER
 	HGLRC m_hGLContext;
 #endif

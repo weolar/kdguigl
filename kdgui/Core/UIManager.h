@@ -204,6 +204,8 @@ public:
 	void ResetRequestRender();
 	bool IsRequestRender();
 
+	NVGcontext* GetCanvas();
+
 	void HighLightRing(UINode* n);
 
 	enum State {

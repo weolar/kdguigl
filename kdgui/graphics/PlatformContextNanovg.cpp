@@ -36,6 +36,10 @@
 #include "GraphicsContext.h"
 //#include "ImageBuffer.h"
 #include "SkiaUtils.h"
+
+#ifndef _MSC_VER
+#include "dom/style/NodeStyle.h"
+#endif
 #include "TextRun.h"
 
 #include "ext/image_operations.h"

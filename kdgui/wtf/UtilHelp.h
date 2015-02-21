@@ -26,10 +26,6 @@ CStdString UHTrimBlankSpace(const CStdString& str);
 
 SkColor UHParseColorToRGB(const CStdString& sColor);
 
-struct TextRun;
-IntRect UHMeasureTextByTextRun(int x, int y, int width, const TextRun& textRun, int* descender, bool* pbNeedEllipsis);
-void UHSetSkPaintByTextRun(SkPaint& skPaint, const TextRun& textRun);
-
 bool UHLoadRes(LPCTSTR pSrc, CPageManager* pManager, CStdValVector& data);
 
 bool UHCanEventUseCapture (UIEventType evt);

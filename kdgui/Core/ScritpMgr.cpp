@@ -28,8 +28,6 @@ void ScritpMgr::PrintFunc(HSQUIRRELVM v,const SQChar* s,...) {
 	scvsprintf(temp.GetBuffer(2048),s, vl);
 	temp.ReleaseBuffer();
 
-	LOGI("ScritpMgr::PrintFunc");
-
 	if (temp.IsEmpty() || L'\n' != temp.GetAt(temp.GetLength() - 1))
 		temp += _SC(" -- print\n");
 	OutputDebugString(temp);
@@ -41,69 +39,13 @@ void ScritpMgr::PrintFunc(HSQUIRRELVM v,const SQChar* s,...) {
 	va_end(vl);
 }
 
-// char* CString::GetBuffer( int nMinBufLength )
-// {
-// 	const char* strTmp = this->c_str();
-// 	int nCount = strlen(strTmp);
-// 	if (nMinBufLength == 0)
-// 		nMinBufLength = nCount;
-// 
-// 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Into GetBuffer");
-// 
-// 	if (nCount > nMinBufLength)
-// 		return NULL;
-// 	if (strBuffer != NULL) {
-// 		__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "strBuffer:%x %d", strBuffer, nMinBufLength);
-// 		delete []strBuffer;
-// 	}
-// 
-// 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Into GetBuffer 2");
-// 
-// 	strBuffer = new char[nMinBufLength + 1];
-// 	strcpy(strBuffer, strTmp);
-// 	strBuffer[nMinBufLength] = '\0';
-// 
-// 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Into GetBuffer 3 %x %d", strBuffer, nMinBufLength);
-// 
-// 	return strBuffer;
-// }
-// 
-// void CString::ReleaseBuffer(int nNewLength)
-// {
-// 	if (strBuffer != NULL)
-// 	{
-// 		this->Empty();
-// 		this->Append(strBuffer);
-// 
-// 		LOGI("ReleaseBuffer 1:%x", strBuffer);
-// 		delete []strBuffer;
-// 		LOGI("ReleaseBuffer 2!");
-// 	}
-// 	this->TrimRight('\0');
-// }
-
 void ScritpMgr::ErrorFunc(HSQUIRRELVM v,const SQChar* s,...) {
 	CStdString temp;
 	va_list vl;
 	va_start(vl, s);
 
-// 	char* j = va_arg(vl, char*); 
-// 
-// 	char* xx = (char*)malloc(1024);
-// 	memset(xx, 0, 1024);
-// 	memcpy(xx, (void*)j, 100);
-// 
-// 	LOGI("ErrorFunc 1!%s %s", s, xx);
-// 
-// 	scvsprintf(xx, s, vl);
-// 	free(xx);
-
-	LOGI("ErrorFunc 1");
-
 	scvsprintf(temp.GetBuffer(2048), s, vl);
 	temp.ReleaseBuffer();
-
-	LOGI("ErrorFunc 2");
 
 	OutputDebugString(temp);
 
@@ -273,8 +215,12 @@ bool ScritpMgr::CompileAndCall(const char* s, int cchMultiByte, const SQChar* so
 		cchMultiByte -= nBOMHead;
 	}
 
+	LOGI("ScritpMgr: CompileAndCall 1:%s", sourceName);
+
 	if (0 == cchMultiByte)
 		return true;
+
+	LOGI("ScritpMgr: CompileAndCall 2");
 
 	const SQChar* code = utf8Data;
 	int codeDataLen = cchMultiByte;
@@ -297,6 +243,8 @@ bool ScritpMgr::CompileAndCall(const char* s, int cchMultiByte, const SQChar* so
 		KDASSERT(FALSE);
 		return false;
 	}
+
+	LOGI("ScritpMgr: CompileAndCall 3");
 
 	// start the script that was previously compiled
 	sq_pushroottable(m_v);

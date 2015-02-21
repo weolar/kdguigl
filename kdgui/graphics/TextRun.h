@@ -8,7 +8,11 @@ public:
 		: characters(c)
 		, bUnderline(false)
 		, bOverflowEllipsis(false)
+#ifdef _MSC_VER
 		, align(SkPaint::kLeft_Align)
+#else
+		, align(eNRSTextAnchorStart)
+#endif
 		, color(0xFF000000)
 		, familyName(_SC("Î¢ÈíÑÅºÚ"))
 		, textSize(20)
@@ -22,7 +26,12 @@ public:
 
 	CStdString characters;
 	CStdString familyName;
+#ifdef _MSC_VER
 	SkPaint::Align align;
+#else
+	NRSTextAnchor align;
+#endif
+	
 	SkScalar textSize;
 	SkColor color;
 };

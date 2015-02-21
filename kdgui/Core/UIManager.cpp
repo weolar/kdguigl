@@ -193,8 +193,6 @@ bool CPageManager::LoadScriptFromBuf(LPCTSTR src, LPCTSTR scriptBuf, int size) {
 
 	m_docURI = src;
 
-	LOGI("CPageManager: LoadScriptFromBuf");
-
 	NotifScriptInit();
 	// ±àÒë²¢Ö´ÐÐ
 	m_scriptMgr->CompileAndCall(scriptBuf, size, src);
@@ -448,6 +446,9 @@ bool CPageManager::IsRequestRender() {
 	return m_paintMgr->m_bRequestRender;
 }
 
+NVGcontext* CPageManager::GetCanvas() {
+	return m_paintMgr->m_memoryCanvas;
+}
 
 DWORD nextFireTime = -2;
 
@@ -455,14 +456,14 @@ void CPageManager::MainLoop() {
 	if (!m_paintMgr)
 		return;
 
-	double minNextFireTime = m_threadTimers->minNextFireTime();
-	if (-2 != nextFireTime) {
-		if (-1 == minNextFireTime)
-			WTF::WaitEvent(m_paintMgr->m_hMainLoopWakeUpEvent, (DWORD)-1);
-		else
-			WTF::WaitEvent(m_paintMgr->m_hMainLoopWakeUpEvent, (DWORD)minNextFireTime);
-	}
-	nextFireTime = (DWORD)minNextFireTime;
+// 	double minNextFireTime = m_threadTimers->minNextFireTime();
+// 	if (-2 != nextFireTime) {
+// 		if (-1 == minNextFireTime)
+// 			WTF::WaitEvent(m_paintMgr->m_hMainLoopWakeUpEvent, (DWORD)-1);
+// 		else
+// 			WTF::WaitEvent(m_paintMgr->m_hMainLoopWakeUpEvent, (DWORD)minNextFireTime);
+// 	}
+// 	nextFireTime = (DWORD)minNextFireTime;
 
 	ScheduleTaskForHeartBeat(0);
 }

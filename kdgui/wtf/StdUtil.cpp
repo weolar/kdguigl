@@ -102,8 +102,12 @@ UINT WINAPI CStdValArray::WriteData(const unsigned char* pData, UINT uSize) {
 }
 
 unsigned char* WINAPI CStdValArray::ReAlloc(UINT uSize) {
+	if (1 != m_iElementSize)
+		return 0;
+
 	if (m_nAllocated < (int)uSize)
 		ResizePrealloc(uSize);
+	m_nCount = uSize;
 	return m_pVoid;
 }
 

@@ -43,7 +43,7 @@ public:
 
 protected:
 	bool CreateTextRunByStyle(const NodeStyle* style, TextRun& textRun);
-	void DrawWithEllipsis(GraphicsContext* g, SkPaint& skPaint, IntRect& bounding, TextRun& textRun);
+	void DrawWithEllipsis(GraphicsContext* g, IntRect& bounding, TextRun& textRun);
 	IntRect GetBoundingByStyle();
 
 	CStdString m_text;
