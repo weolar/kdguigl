@@ -141,6 +141,10 @@ private:
 };
 
 // Helper when calling qsort with a compare proc that has typed its arguments
-#define SkCastForQSort(compare) reinterpret_cast<int (__cdecl *)(const void*, const void*)>(compare)
+#ifdef _MSC_VER
+#define SkCastForQSort(compare) reinterpret_cast< int (__cdecl *)(const void*, const void*) >(compare)
+#else
+#define SkCastForQSort(compare) reinterpret_cast< int (*)(const void*, const void*) >(compare)
+#endif
 
 #endif

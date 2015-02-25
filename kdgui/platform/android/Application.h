@@ -12,6 +12,8 @@ public:
 	void Init(jint width, jint height);
 	void MainLoop();
 
+	CPageManager* GetPageMgr() {return m_pageMgr;}
+
 private:
 	static LRESULT WINAPI ResCallback (
 		KdPagePtr pKdPagePtr,

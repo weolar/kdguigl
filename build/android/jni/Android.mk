@@ -42,6 +42,7 @@ F:/Gui2/eclipse/android-ndk-r8d/sources/cxx-stl/stlport/stlport
 LOCAL_SRC_FILES := ../../../kdgui/UILib.cpp \
 ../../../kdgui/platform/android/Application.cpp\
 ../../../kdgui/platform/android/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp\
+../../../kdgui/platform/android/TouchesJni.cpp\
 ../../../kdgui/Api/PageManagerPublicAndroid.cpp\
 ../../../kdgui/bindings/KqPropsPushHelp.cpp\
 ../../../kdgui/bindings/ScriptApi.cpp\
@@ -144,6 +145,8 @@ LOCAL_SRC_FILES := ../../../kdgui/UILib.cpp \
 ../../../skia/src/core/SkRRect.cpp\
 ../../../skia/src/core/SkScalar.cpp\
 ../../../skia/src/core/SkPoint.cpp\
+../../../skia/src/core/SkRegion.cpp\
+../../../skia/src/core/SkRegion_path.cpp\
 ../../../skia/src/core/SkPath.cpp\
 ../../../skia/src/core/Sk64.cpp\
 ../../../skia/src/core/SkGeometry.cpp\
@@ -151,6 +154,7 @@ LOCAL_SRC_FILES := ../../../kdgui/UILib.cpp \
 ../../../skia/src/core/SkBuffer.cpp\
 ../../../skia/src/core/SkUtils.cpp\
 ../../../skia/src/core/SkFixAndroid.cpp\
+../../../skia/src/core/SkBlitter.cpp\
 stlfix.cpp
 
 include $(BUILD_SHARED_LIBRARY)

@@ -24,6 +24,7 @@
 #include "PaintMgr.h"
 #include "EffectsResNodeMgr.h"
 //#include "MessageMgr.h"
+#include "TouchMessageMgr.h"
 #include "IdMgr.h"
 #include "AnimMgr.h"
 //#include "DbgMgr.h"
@@ -44,7 +45,7 @@ CPageManager::CPageManager()
 
 	, m_paintMgr(new PaintMgr(this))
 	, m_effectsResNodeMgr(new EffectsResNodeMgr(this))
-	//, m_messageMgr(new MessageMgr(this))
+	, m_messageMgr(new MessageMgr(this))
 	, m_scriptMgr(new ScritpMgr(this))
 	, m_idMgr(new IdMgr())
 	, m_DOMTimerMgr(NULL)
@@ -102,7 +103,7 @@ void CPageManager::Uninit() {
 	m_scriptMgr->CloseMainFunc();
 	ScheduleAllTasks(PageManagerDelayTask::ePMDTUniniting);
 
-	//m_messageMgr->Uninit();
+	m_messageMgr->Uninit();
 	KDASSERT(1 == m_rootNode->GetRef());
 	m_rootNode = NULL;
 
@@ -118,7 +119,7 @@ void CPageManager::Uninit() {
 	m_eState = eScriptDestroying;
 	UHDeletePtr(&m_scriptMgr); // 一定要清理完各种别的资源再关闭脚本，否则在关闭别的资源的时候，可能还会操作脚本元素
 
-	//UHDeletePtr(&m_messageMgr);
+	UHDeletePtr(&m_messageMgr);
 	UHDeletePtr(&m_effectsResNodeMgr);
 	UHDeletePtr(&m_idMgr);
 	//UHDeletePtr(&m_dbgMgr);
@@ -128,7 +129,7 @@ void CPageManager::Uninit() {
 
 void CPageManager::InitMgrs() {
 	m_paintMgr->Init();
-	//m_messageMgr->Init();
+	m_messageMgr->Init();
 	m_scriptMgr->Init();
 	m_effectsResNodeMgr->Init();
 	m_idMgr->Init();
@@ -261,7 +262,7 @@ bool CPageManager::InitControls(UINode* pControl) {
 }
 
 void CPageManager::ReapObjects(UINode* pControl) {
-	//m_messageMgr->CheckForReapObjects(pControl);
+	m_messageMgr->CheckForReapObjects(pControl);
 
 	if (eUniniting != m_eState)
 		KDASSERT(pControl != m_rootNode.get());
@@ -418,6 +419,21 @@ BOOL CPageManager::PreProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, 
 	//	return m_messageMgr->ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
 
 	return FALSE;
+}
+
+void CPageManager::handleTouchesBegin(int num, int ids[], float xs[], float ys[]) {
+	m_messageMgr->handleTouchesBegin(num, ids, xs, ys);
+}
+void CPageManager::handleTouchesMove(int num, int ids[], float xs[], float ys[]) {
+	m_messageMgr->handleTouchesMove(num, ids, xs, ys);
+}
+
+void CPageManager::handleTouchesEnd(int num, int ids[], float xs[], float ys[]) {
+	m_messageMgr->handleTouchesEnd(num, ids, xs, ys);
+}
+
+void CPageManager::handleTouchesCancel(int num, int ids[], float xs[], float ys[]) {
+	m_messageMgr->handleTouchesCancel(num, ids, xs, ys);
 }
 
 void CPageManager::SetClientRectAndInvalideta(const IntRect& rc) {

@@ -197,6 +197,11 @@ bool UHCanEventUseCapture (UIEventType evt) {
 	case UIEVENT_KILLFOCUS:
 	case UIEVENT_SETFOCUS:
 	case UIEVENT_MOUSEWHEEL:
+
+	case UIEVENT_TOUCHBEGIN:
+	case UIEVENT_TOUCHMOVE:
+	case UIEVENT_TOUCHEND:
+	case UIEVENT_TOUCANCEL:
 		return true;
 	}
 
@@ -221,6 +226,11 @@ UIEventType UHEventNameToEnum (const SQChar* eventName) {
 		InsertEventNameMap(_SC("focus"), UIEVENT_SETFOCUS);
 		InsertEventNameMap(_SC("blur"), UIEVENT_KILLFOCUS);
 		InsertEventNameMap(_SC("mousewheel"), UIEVENT_MOUSEWHEEL);
+
+		InsertEventNameMap(_SC("touchbegin"), UIEVENT_TOUCHBEGIN);
+		InsertEventNameMap(_SC("touchmove"), UIEVENT_TOUCHMOVE);
+		InsertEventNameMap(_SC("touchend"), UIEVENT_TOUCHEND);
+		InsertEventNameMap(_SC("touchcancel"), UIEVENT_TOUCANCEL);
 	}
 
 	if (!eventName)
@@ -252,6 +262,11 @@ bool UHIsMouseEvent (UIEventType evt) {
 	case UIEVENT_MOUSEDOWN:
 	case UIEVENT_MOUSEUP:
 	case UIEVENT_CLICK:
+
+	case UIEVENT_TOUCHBEGIN:
+	case UIEVENT_TOUCHMOVE:
+	case UIEVENT_TOUCHEND:
+	case UIEVENT_TOUCANCEL:
 		return true;
 	}
 

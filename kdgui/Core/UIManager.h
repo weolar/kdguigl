@@ -230,6 +230,11 @@ public:
 
 	void MainLoop();
 
+	void handleTouchesBegin(int num, int ids[], float xs[], float ys[]);
+	void handleTouchesMove(int num, int ids[], float xs[], float ys[]);
+	void handleTouchesEnd(int num, int ids[], float xs[], float ys[]);
+	void handleTouchesCancel(int num, int ids[], float xs[], float ys[]);
+
 private:
 	void InitMgrs();
 

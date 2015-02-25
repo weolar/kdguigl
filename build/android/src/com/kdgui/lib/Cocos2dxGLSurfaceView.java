@@ -71,6 +71,8 @@ class Cocos2dxGLSurfaceView extends GLSurfaceView {
     private static String TAG = "Cocos2dxGLSurfaceView";
     private static final boolean DEBUG = false;
     
+    private Cocos2dxRenderer mCocos2dxRenderer = null;
+    
     public static void loadAsset(Context activity) {
 		AssetManager assetManager = activity.getAssets();
 		Cocos2dxRenderer.setAssetManager(assetManager);
@@ -114,7 +116,8 @@ class Cocos2dxGLSurfaceView extends GLSurfaceView {
                              new ConfigChooser(5, 6, 5, 0, depth, stencil) );
 
         /* Set the renderer responsible for frame rendering */
-        setRenderer(new Cocos2dxRenderer(this));
+        mCocos2dxRenderer = new Cocos2dxRenderer(this);
+        setRenderer(mCocos2dxRenderer);
         
         //setRenderMode(RENDERMODE_WHEN_DIRTY);
     }
@@ -334,6 +337,104 @@ class Cocos2dxGLSurfaceView extends GLSurfaceView {
         protected int mStencilSize;
         private int[] mValue = new int[1];
     }
+    
+    @Override
+	public boolean onTouchEvent(final MotionEvent pMotionEvent) {
+		// these data are used in ACTION_MOVE and ACTION_CANCEL
+		final int pointerNumber = pMotionEvent.getPointerCount();
+		final int[] ids = new int[pointerNumber];
+		final float[] xs = new float[pointerNumber];
+		final float[] ys = new float[pointerNumber];
+
+		for (int i = 0; i < pointerNumber; i++) {
+			ids[i] = pMotionEvent.getPointerId(i);
+			xs[i] = pMotionEvent.getX(i);
+			ys[i] = pMotionEvent.getY(i);
+		}
+		switch (pMotionEvent.getAction() & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_POINTER_DOWN:
+				final int indexPointerDown = pMotionEvent.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+				final int idPointerDown = pMotionEvent.getPointerId(indexPointerDown);
+				final float xPointerDown = pMotionEvent.getX(indexPointerDown);
+				final float yPointerDown = pMotionEvent.getY(indexPointerDown);
+
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionDown(idPointerDown, xPointerDown, yPointerDown);
+						
+					}
+				});
+				break;
+
+			case MotionEvent.ACTION_DOWN:
+				// there are only one finger on the screen
+				final int idDown = pMotionEvent.getPointerId(0);
+				final float xDown = xs[0];
+				final float yDown = ys[0];
+
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionDown(idDown, xDown, yDown);
+					}
+				});
+				break;
+
+			case MotionEvent.ACTION_MOVE:
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionMove(ids, xs, ys);
+					}
+				});
+				break;
+
+			case MotionEvent.ACTION_POINTER_UP:
+				final int indexPointUp = pMotionEvent.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+				final int idPointerUp = pMotionEvent.getPointerId(indexPointUp);
+				final float xPointerUp = pMotionEvent.getX(indexPointUp);
+				final float yPointerUp = pMotionEvent.getY(indexPointUp);
+
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionUp(idPointerUp, xPointerUp, yPointerUp);
+					}
+				});
+				break;
+
+			case MotionEvent.ACTION_UP:
+				// there are only one finger on the screen
+				final int idUp = pMotionEvent.getPointerId(0);
+				final float xUp = xs[0];
+				final float yUp = ys[0];
+
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionUp(idUp, xUp, yUp);
+					}
+				});
+				break;
+
+			case MotionEvent.ACTION_CANCEL:
+				this.queueEvent(new Runnable() {
+					@Override
+					public void run() {
+						Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleActionCancel(ids, xs, ys);
+					}
+				});
+				break;
+		}
+
+        /*
+		if (BuildConfig.DEBUG) {
+			Cocos2dxGLSurfaceView.dumpMotionEvent(pMotionEvent);
+		}
+		*/
+		return true;
+	}
 
 //    private static class Renderer implements GLSurfaceView.Renderer {
 //    	Cocos2dxGLSurfaceView m_view = null;
